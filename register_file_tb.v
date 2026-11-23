@@ -59,18 +59,17 @@ module register_file_tb;
         RegWrite_in = 0;            // Disable write
         #20;
 
+
         // --- Test Case 2: Read back from Register 8 AND Read Register 0 ---
-        $display("Test 2: Reading Register 8 and Register 0");
+        $display("Test 2: Reading Register 8 (should be 0xAAAA5555) and Register 0 (should be 0)");
         ReadReg1_in = 5'd8; // Read port 1 looks at Reg 8
         ReadReg2_in = 5'd0; // Read port 2 looks at Reg 0
         #20;
         // Verify results in console
-        $display("  Expected: R8=aaaa5555, R0=00000000");
-        $display("  Got:      R8=%h, R0=%h", ReadData1_out, ReadData2_out);
         if (ReadData1_out == 32'hAAAA5555 && ReadData2_out == 32'h00000000)
-            $display("  SUCCESS: Reads correct.");
+            $display("SUCCESS: Reads correct.");
         else
-            $display("  FAILURE: Reads incorrect.");
+            $display("FAILURE: Reads incorrect. R8=%h, R0=%h", ReadData1_out, ReadData2_out);
 
 
         // --- Test Case 3: Attempt to Write to Register 0 ---
@@ -86,12 +85,10 @@ module register_file_tb;
         $display("Test 4: Reading Register 0 back");
         ReadReg1_in = 5'd0;
         #20;
-        $display("  Expected: R0=00000000");
-        $display("  Got:      R0=%h", ReadData1_out);
-        if (ReadData1_out == 32'h00000000)
-            $display("  SUCCESS: Register 0 write ignored.");
+         if (ReadData1_out == 32'h00000000)
+            $display("SUCCESS: Register 0 write ignored.");
         else
-            $display("  FAILURE: Register 0 was written to!");
+            $display("FAILURE: Register 0 was written to! R0=%h", ReadData1_out);
 
         // End simulation
         #100;

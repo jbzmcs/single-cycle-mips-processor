@@ -6,7 +6,7 @@ module program_counter(
 );
     always @(posedge clk) begin
         if (reset)
-            current_pc <= 32'h00400000; // Standard MIPS Text Segment Start
+            current_pc <= 32'h003FFFFC; // Required for Lab 8: addr_in=pc_out needs 1-cycle pre-load
         else
             current_pc <= next_pc;
     end

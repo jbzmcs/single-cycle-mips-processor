@@ -25,15 +25,13 @@ module data_memory(
 	input clock,
 	input reset,
 
-	input		[31:0]	addr_in, //Read/Write address
-	input		[31:0]	writedata_in,//Data to write to memory
-	input					re_in, //Read Enable - set high when reading from memory
-	input					we_in, //Write Enable - set high when writing to memory
-	input		[1:0]		size_in,  //Data output for reads from memory
-	output	reg [31:0]	readdata_out, //Not used yet - hardwire to 2'b11
+	input		[31:0]	addr_in,
+	input		[31:0]	writedata_in,
+	input					re_in,
+	input					we_in,
+	input		[1:0]		size_in,
+	output	reg [31:0]	readdata_out,
 	
-	//these are used to let your processor print things to a serial port (e.g. "Hello World")
-	//wire them up to the same ports in your processor module so they can talk to the test bench
 	//serial port connection that need to be routed out of the process
 	input		[7:0]		serial_in,
 	input					serial_ready_in,
