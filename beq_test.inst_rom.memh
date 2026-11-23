@@ -1,0 +1,35 @@
+// BEQ Test Program - Single-Cycle MIPS Lab 9
+// Instructions are stored byte-reversed (little-endian) because inst_rom.v
+// byte-swaps on output: data_out = {out[7:0],out[15:8],out[23:16],out[31:24]}
+//
+// Test 1: BEQ TAKEN  ($t0=5, $t1=5 → equal → branch)
+//   inst 0: addi $t0, $zero, 5     → machine 0x20080005 → 05000820
+//   inst 1: addi $t1, $zero, 5     → machine 0x20090005 → 05000920
+//   inst 2: beq  $t0, $t1, +1     → machine 0x11090001 → 01000911
+//             (offset=+1, target = PC+4+4 = byte 0x010 = inst 4)
+//   inst 3: addi $t2, $zero, 255   → machine 0x200A00FF → ff000a20  *** SKIPPED ***
+//   inst 4: addi $t2, $zero, 7     → machine 0x200A0007 → 07000a20  (branch lands here)
+//
+// Test 2: BEQ NOT TAKEN ($t0=3, $t1=5 → not equal → no branch)
+//   inst 5: addi $t0, $zero, 3     → machine 0x20080003 → 03000820
+//   inst 6: addi $t1, $zero, 5     → machine 0x20090005 → 05000920
+//   inst 7: beq  $t0, $t1, +1     → machine 0x11090001 → 01000911  (NOT taken)
+//   inst 8: addi $t3, $zero, 100   → machine 0x200B0064 → 64000b20  (executes normally)
+//   inst 9: addi $s0, $zero, 42    → machine 0x2010002A → 2a001020
+//
+// Halt: BEQ $zero,$zero,-1 (branch to self = infinite loop)
+//   inst10: beq  $zero,$zero,-1    → machine 0x1000FFFF → ffff0010
+//   inst11: nop (padding)          → machine 0x00000000 → 00000000
+
+@00000000 05000820
+05000920
+01000911
+ff000a20
+@00000004 07000a20
+03000820
+05000920
+01000911
+@00000008 64000b20
+2a001020
+ffff0010
+00000000

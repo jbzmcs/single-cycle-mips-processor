@@ -21,7 +21,13 @@ module register_file(
 
     // 2. Synchronous Write Logic (Sequential)
     always @(posedge clk) begin
-        if (RegWrite_in && WriteReg_in != 5'b00000)
-            registers[WriteReg_in] <= WriteData_in;
-    end
+        if (reset) begin
+            // Optional reset logic can go here
+        end 
+        else if (RegWrite_in) begin
+            if (WriteReg_in != 5'b00000) begin
+                registers[WriteReg_in] <= WriteData_in;
+            end
+        end
+    end 
 endmodule
