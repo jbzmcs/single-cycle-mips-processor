@@ -1,0 +1,28 @@
+// BEQ unit test for Lab 9.
+// inst_rom.v byte-swaps each loaded word, so these are byte-reversed
+// versions of the normal 32-bit MIPS machine instructions.
+//
+// The program builds the serial MMIO base address in $s4, verifies one
+// taken BEQ and one not-taken BEQ, prints "P" on the taken path, then
+// loops forever.
+@00000000
+00400a20
+22a00a00
+22a08a02
+22a08a02
+22a08a02
+05000820
+05000920
+02000911
+46000a20
+0c008aae
+50000a20
+0c008aae
+07000a20
+03000820
+05000920
+01000911
+64000b20
+2a001020
+ffff0010
+00000000

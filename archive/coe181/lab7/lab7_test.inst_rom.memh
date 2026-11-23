@@ -1,0 +1,27 @@
+// Lab 7 Custom Test Program
+// NOTE: rom[0] is a placeholder NOP — the hardware feeds inst_rom with
+// pc_next (= pc+4), so the first instruction actually executed comes
+// from rom[1], not rom[0].
+//
+// Values stored here are BYTE-REVERSED because inst_rom swaps bytes on output:
+//   data_out = {out[7:0], out[15:8], out[23:16], out[31:24]}
+//
+// Expected register results after all instructions complete:
+//   $t0 = 5  (0x00000005)  ← ADDI
+//   $t1 = 3  (0x00000003)  ← ADDI
+//   $t2 = 8  (0x00000008)  ← ADD  (5 + 3)
+//   $t3 = 2  (0x00000002)  ← SUB  (5 - 3)
+//   $t4 = 1  (0x00000001)  ← AND  (0b101 & 0b011 = 0b001)
+//   $t5 = 7  (0x00000007)  ← OR   (0b101 | 0b011 = 0b111)
+//   $t6 = 0xFFFFFFF8       ← NOR  (~(5|3) = ~7)
+//   $t7 = 6  (0x00000006)  ← XOR  (0b101 ^ 0b011 = 0b110)
+
+00000000
+05000820
+03000920
+20500901
+22580901
+24600901
+25680901
+27700901
+26780901

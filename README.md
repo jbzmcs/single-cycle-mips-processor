@@ -128,4 +128,5 @@ and the ALU shift unit.
 | `branches-complete` | Lab 9 | Branches, jumps, shifts, byte memory; runs `fib` and `hello_world` |
 
 Check out any tag (`git checkout control-complete`) to get that lab's Quartus
-project. See [CHANGELOG.md](CHANGELOG.md) for details.
+project. See [CHANGELOG.md](CHANGELOG.md) for details. Older and alternate
+working copies are kept in [`archive/`](archive/).
