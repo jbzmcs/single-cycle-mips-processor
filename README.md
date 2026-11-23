@@ -10,6 +10,18 @@ serial port.
 > three labs: the datapath (Lab 7), the control unit (Lab 8), and branches and
 > jumps (Lab 9). Each lab is a tagged commit. See [Project history](#project-history).
 
+## Repository layout
+
+```
+├── rtl/              Processor design (top level: processor.v)
+├── sim/              Testbenches
+├── programs/         Benchmark programs, one folder each (memory images + sources)
+├── docs/             Control-signal table
+├── archive/          Older and alternate working copies
+├── processor.qpf     Quartus project
+└── processor.qsf     Quartus settings and file list
+```
+
 ## Supported Instructions
 
 | Group | Instructions |
@@ -22,7 +34,7 @@ serial port.
 | Jumps | `j`, `jal`, `jr` |
 
 The full control-signal table (one row per signal, one column per instruction
-group) is in [`control_signal_table.csv`](control_signal_table.csv).
+group) is in [`docs/control_signal_table.csv`](docs/control_signal_table.csv).
 
 ## Datapath
 
@@ -53,8 +65,9 @@ group) is in [`control_signal_table.csv`](control_signal_table.csv).
 
 ## Benchmarks
 
-The `.memh` files hold assembled programs for `inst_rom` (`*.inst_rom.memh`) and
-the four byte lanes of `data_memory` (`*.data_ram0-3.memh`).
+Each folder in `programs/` holds one program's memory images: `*.inst_rom.memh`
+for `inst_rom`, and `*.data_ram0-3.memh` for the four byte lanes of
+`data_memory`.
 
 | Program | What it exercises | Expected serial output |
 |---|---|---|
@@ -67,16 +80,21 @@ Both printing programs end in a `jal`-to-itself loop, so they print once and
 then spin silently. The Lab 8 benchmarks (`lab7-test` and the no-branch
 `nbhelloworld`) are in the `control-complete` tag.
 
-To switch programs, comment and uncomment the matching `INIT_PROGRAM` (in
-`inst_rom`) and `INIT_PROGRAM0`–`3` (in `data_memory`) lines in `processor.v`.
+**Choosing a program:** set `BENCHMARK` at the top of
+[`rtl/processor.v`](rtl/processor.v):
 
-> The `INIT_PROGRAM` paths in `processor.v` are absolute
-> (`C:/intelFPGA_lite/18.1/SingleCycleMIPSBranches/...`). Update them to where you
-> cloned this repository.
+```verilog
+`define BENCHMARK "fib"   // or "hello_world", "beq_test", "lab8-test"
+```
+
+The paths are relative. Quartus resolves them from the project folder, and
+ModelSim (launched through NativeLink) from `simulation/modelsim`.
+`processor.v` picks the right prefix using ModelSim's built-in `MODEL_TECH`
+macro.
 
 ## Simulation
 
-`testbench.v` instantiates the processor and generates the clock. It holds
+`sim/testbench.v` instantiates the processor and generates the clock. It holds
 `reset` high for the first 200 ns and prints every byte written to the serial
 port:
 
@@ -86,7 +104,7 @@ port:
 
 In Quartus, set the testbench to `testbench` and run **Tools → Run Simulation
 Tool → RTL Simulation** (ModelSim – Intel FPGA Edition). Unit testbenches:
-`control_tb.v` and `register_file_tb.v`.
+`sim/control_tb.v` and `sim/register_file_tb.v`.
 
 ## Building (Quartus)
 
@@ -94,22 +112,19 @@ Tool → RTL Simulation** (ModelSim – Intel FPGA Edition). Unit testbenches:
 2. Run **Processing → Start Compilation**.
 3. Check the wiring with **Tools → Netlist Viewers → RTL Viewer**.
 
-## File Structure
+## Design Files
 
 | File | Description |
 |---|---|
-| `processor.v` | Top level: datapath, next-PC logic, and write-back |
-| `control.v` | Main control unit (opcode/funct/rt → 15 control signals) |
-| `alu.v` | ALU with branch-condition outputs, plus the shift unit |
-| `register_file.v` | 32 × 32-bit register file (`$zero` hardwired) |
-| `program_counter.v` | PC register (resets to `0x003FFFFC`) |
-| `adder.v`, `sign_extender.v`, `mux_2input.v` | Small building blocks |
-| `inst_rom.v` | Registered instruction ROM |
-| `data_memory.v`, `async_memory.v`, `serial_buf.v` | Data RAM and memory-mapped serial port |
-| `testbench.v`, `control_tb.v`, `register_file_tb.v` | Testbenches |
-| `*.memh` | Benchmark memory images |
-| `control_signal_table.csv` | Control-signal table from the lab report |
-| `processor.qpf`, `processor.qsf` | Quartus project and settings |
+| `rtl/processor.v` | Top level: datapath, next-PC logic, and write-back |
+| `rtl/control.v` | Main control unit (opcode/funct/rt → 15 control signals) |
+| `rtl/alu.v` | ALU with branch-condition outputs, plus the shift unit |
+| `rtl/register_file.v` | 32 × 32-bit register file (`$zero` hardwired) |
+| `rtl/program_counter.v` | PC register (resets to `0x003FFFFC`) |
+| `rtl/adder.v`, `rtl/sign_extender.v`, `rtl/mux_2input.v` | Small building blocks |
+| `rtl/inst_rom.v` | Registered instruction ROM |
+| `rtl/data_memory.v`, `rtl/async_memory.v`, `rtl/serial_buf.v` | Data RAM and memory-mapped serial port |
+| `sim/testbench.v`, `sim/control_tb.v`, `sim/register_file_tb.v` | Testbenches |
 
 ## Credits
 
@@ -127,6 +142,7 @@ and the ALU shift unit.
 | `control-complete` | Lab 8 | Control unit for R-type, `addi`, `lw`, `sw`; runs `lab7-test` and `nbhelloworld` |
 | `branches-complete` | Lab 9 | Branches, jumps, shifts, byte memory; runs `fib` and `hello_world` |
 
-Check out any tag (`git checkout control-complete`) to get that lab's Quartus
-project. See [CHANGELOG.md](CHANGELOG.md) for details. Older and alternate
-working copies are kept in [`archive/`](archive/).
+The tags hold each lab's flat Quartus project as it was submitted, with
+absolute `.memh` paths. Check one out with `git checkout control-complete`.
+See [CHANGELOG.md](CHANGELOG.md) for details. Older and alternate working
+copies are kept in [`archive/`](archive/).

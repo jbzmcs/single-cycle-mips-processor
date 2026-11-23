@@ -1,3 +1,15 @@
+// Benchmark program, loaded from programs/<name>/.
+// Options: "fib", "hello_world", "beq_test", "lab8-test"
+`define BENCHMARK "fib"
+
+// Quartus resolves paths from the project folder. ModelSim (NativeLink)
+// runs from simulation/modelsim, two levels below it.
+`ifdef MODEL_TECH
+`define BENCHMARK_PATH {"../../programs/", `BENCHMARK, "/", `BENCHMARK}
+`else
+`define BENCHMARK_PATH {"programs/", `BENCHMARK, "/", `BENCHMARK}
+`endif
+
 module processor (
     input  clock,
     input  reset,
@@ -78,8 +90,7 @@ module processor (
 
     inst_rom #(
         .ADDR_WIDTH(10),
-//      .INIT_PROGRAM("C:/intelFPGA_lite/18.1/SingleCycleMIPSBranches/hello_world.inst_rom.memh")
-        .INIT_PROGRAM("C:/intelFPGA_lite/18.1/SingleCycleMIPSBranches/fib.inst_rom.memh")
+        .INIT_PROGRAM({`BENCHMARK_PATH, ".inst_rom.memh"})
     ) IMEM (
         .clock(clock), .reset(reset),
         .addr_in(pc_next), .data_out(instruction)
@@ -160,14 +171,10 @@ module processor (
     // 6. DATA MEMORY  (memory stage)
     // =====================================================================
     data_memory #(
-//      .INIT_PROGRAM0("C:/intelFPGA_lite/18.1/SingleCycleMIPSBranches/hello_world.data_ram0.memh"),
-//      .INIT_PROGRAM1("C:/intelFPGA_lite/18.1/SingleCycleMIPSBranches/hello_world.data_ram1.memh"),
-//      .INIT_PROGRAM2("C:/intelFPGA_lite/18.1/SingleCycleMIPSBranches/hello_world.data_ram2.memh"),
-//      .INIT_PROGRAM3("C:/intelFPGA_lite/18.1/SingleCycleMIPSBranches/hello_world.data_ram3.memh")
-        .INIT_PROGRAM0("C:/intelFPGA_lite/18.1/SingleCycleMIPSBranches/fib.data_ram0.memh"),
-        .INIT_PROGRAM1("C:/intelFPGA_lite/18.1/SingleCycleMIPSBranches/fib.data_ram1.memh"),
-        .INIT_PROGRAM2("C:/intelFPGA_lite/18.1/SingleCycleMIPSBranches/fib.data_ram2.memh"),
-        .INIT_PROGRAM3("C:/intelFPGA_lite/18.1/SingleCycleMIPSBranches/fib.data_ram3.memh")
+        .INIT_PROGRAM0({`BENCHMARK_PATH, ".data_ram0.memh"}),
+        .INIT_PROGRAM1({`BENCHMARK_PATH, ".data_ram1.memh"}),
+        .INIT_PROGRAM2({`BENCHMARK_PATH, ".data_ram2.memh"}),
+        .INIT_PROGRAM3({`BENCHMARK_PATH, ".data_ram3.memh"})
     ) DMEM (
         .clock(clock),            .reset(reset),
         .addr_in(alu_result),     .writedata_in(read_data2),

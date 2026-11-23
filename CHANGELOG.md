@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format is based on 
 
 ## [Unreleased]
 
+### Changed
+- Reorganized the project into folders: `rtl/` (design), `sim/` (testbenches), `programs/` (one folder per benchmark), and `docs/`. `processor.qsf` points at the new paths.
+- Program selection is a single `BENCHMARK` define in `rtl/processor.v`. Paths are relative now instead of absolute, with a separate prefix for ModelSim, which runs from `simulation/modelsim`.
+
+### Added
+- C, assembly and disassembly sources for `fib` and `hello_world` in `programs/`
+- `archive/`: older and alternate working copies
+
 ## [branches-complete] — Branches, Jumps and Shifts (Lab 9)
 
 ### Added
